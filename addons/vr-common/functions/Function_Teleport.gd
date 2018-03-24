@@ -77,6 +77,14 @@ func _ready():
 	set_player_height(player_height)
 	set_player_radius(player_radius)
 
+static func is_pad_center_pressed(controller):
+	# button 14 is mapped to the thumb pad
+	if controller.is_button_pressed(14):
+		var x = controller.get_joystick_axis(0)
+		var y = controller.get_joystick_axis(1)
+		return Vector2(x, y).length() < controller.pad_center_radius
+	else:
+		return false
 
 func _physics_process(delta):
 	# We should be the child or the controller on which the teleport is implemented
@@ -88,9 +96,9 @@ func _physics_process(delta):
 		ws = new_ws
 		$Teleport.mesh.size = Vector2(0.05 * ws, 1.0)
 		$Target.mesh.size = Vector2(ws, ws)
-	
-	# button 15 is mapped to our trigger
-	if controller and controller.get_is_active() and controller.is_button_pressed(15):
+
+	var controller_active = controller and controller.get_is_active()
+	if controller_active and is_pad_center_pressed(controller):
 		if !is_teleporting:
 			is_teleporting = true
 			$Teleport.visible = true

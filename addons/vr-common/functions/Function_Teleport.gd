@@ -23,6 +23,7 @@ var teleport_rotation = 0.0;
 var floor_normal = Vector3(0.0, 1.0, 0.0)
 var last_target_transform = Transform()
 var collision_shape = null
+var excluded_colliders = []
 var step_size = 0.5
 
 # By default we show a capsule to indicate where the player lands.
@@ -104,25 +105,26 @@ func _physics_process(delta):
 			$Teleport.visible = true
 			$Target.visible = true
 			teleport_rotation = 0.0
-		
+
 		# get our physics engine state
 		var space = PhysicsServer.body_get_space(self.get_rid())
 		var state = PhysicsServer.space_get_direct_state(space)
 		var query = PhysicsShapeQueryParameters.new()
-		
+
 		# init stuff about our query that doesn't change (note that safe margin and collision_mask need to change once we no longer use kinematic body)
 		query.collision_mask = collision_mask
 		query.margin = get_safe_margin()
 		query.shape_rid = collision_shape.get_rid()
-		
+		query.exclude = self.excluded_colliders
+
 		# make a transform for rotating and offseting our shape, it's always lying on its side by default...
 		var shape_transform = Transform(Basis(Vector3(1.0, 0.0, 0.0), deg2rad(90.0)), Vector3(0.0, player_height / 2.0, 0.0))
-		
+
 		# update location
 		var teleport_global_transform = $Teleport.global_transform
 		var target_global_origin = teleport_global_transform.origin
 		var down = Vector3(0.0, -1.0 / ws, 0.0)
-		
+
 		############################################################
 		# New teleport logic
 		# We're going to use test move in steps to find out where we hit something...

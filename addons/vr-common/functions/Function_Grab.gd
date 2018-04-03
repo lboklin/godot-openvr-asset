@@ -115,13 +115,13 @@ func _on_button_release(button):
 
 
 func _on_Function_Grab_body_entered(body):
-	print("RigidBody entered: ", body.name)
+#	print("RigidBody entered: ", body.name)
 	if not grabbed_item and body.has_method("_on_grab_pressed"):
 		self.grabbable_items = [ body ]
 
 
 func _on_Function_Grab_body_exited(body):
-	print("RigidBody exited: ", body.name)
+#	print("RigidBody exited: ", body.name)
 	var items = self.grabbable_items
 	items.erase(body)
 	self.grabbable_items = items
